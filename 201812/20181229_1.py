@@ -3,11 +3,12 @@
 '''
 @Author: chenxj
 @Github: https://github.com/chenxj1101
-@Date: 2019-01-04 10:15:12
-@LastEditors: Please set LastEditors
-@LastEditTime: 2019-01-04 22:06:58
-@Description: 网易云音乐爬虫，补20181229
+@Mail: ccj799@gmail.com
+@Date: 2019-01-04 21:05:17
+@LastEditTime: 2019-01-04 22:14:43
+@Description: 网易云音乐下载，补20181229
 '''
+
 
 import requests, hashlib, sys, click, re, base64, binascii, json, os
 from Crypto.Cipher import AES
