@@ -4,8 +4,8 @@
 @Author: chenxj
 @Github: https://github.com/chenxj1101
 @Date: 2019-01-04 10:15:12
-@LastEditors: chenxj
-@LastEditTime: 2019-01-04 17:15:56
+@LastEditors: Please set LastEditors
+@LastEditTime: 2019-01-04 22:06:58
 @Description: 网易云音乐爬虫，补20181229
 '''
 
@@ -23,7 +23,7 @@ class Encrypyed():
         self.pub_key = '010001'
 
     
-    def Encrypyed_request(self, text):
+    def encrypted_request(self, text):
         text = json.dumps(text)
         sec_key = self.create_secret_key(16)
         enc_text = self.aes_encrypt(self.aes_encrypt(text, self.nonce), sec_key.decode('utf-8'))
@@ -66,7 +66,7 @@ class Crawler():
         self.headers = {
             'Accept': '*/*',
             'Accept-Encoding': 'gzip,deflate,sdch',
-            'Accept-Language': 'zh-CN,zh;q=0.8,gl; q=0.6,zh-TW;q=0.4',
+            'Accept-Language': 'zh-CN,zh;q=0.8,gl;q=0.6,zh-TW;q=0.4',
             'Connection': 'keep-alive',
             'Content-Type': 'application/x-www-form-urlencoded',
             'Host': 'music.163.com',
@@ -84,13 +84,13 @@ class Crawler():
     def post_request(self, url, params):
         """
         Post 请求
-        :return 字典
+        :return: 字典
         """
 
-        data = self.ep.Encrypyed_request(params)
-        resp = self.session.post(url, data=data, time=self.timeout)
+        data = self.ep.encrypted_request(params)
+        resp = self.session.post(url, data=data, timeout=self.timeout)
         result = resp.json()
-        if result['Code'] != 200:
+        if result['code'] != 200:
             click.echo('post_request error')
         else:
             return result
@@ -98,7 +98,7 @@ class Crawler():
     def search(self, search_content, search_type, limit=9):
         """
         搜索API
-        :params search_conten: 搜索内容
+        :params search_content: 搜索内容
         :params search_type: 搜索类型
         :params limit: 返回结果数量
         :return: 字典
@@ -121,7 +121,7 @@ class Crawler():
 
         result = self.search(song_name, search_type=1, limit=limit)
 
-        if result['result'][songCont] <= 0:
+        if result['result']['songCount'] <= 0:
             click.echo(f'Song {song_name} not existed.')
         else:
             songs = result['result']['songs']
@@ -167,7 +167,7 @@ class Crawler():
                 fpath = os.path.join(folder, str(song_num) + '_' + valid_name + '.mp3')
 
             if not os.path.exists(fpath):
-                resp = self.download_session.get(song_url, time=self.timeout, strem=True)
+                resp = self.download_session.get(song_url, timeout=self.timeout, stream=True)
                 length = int(resp.headers.get('content-length'))
                 label = f'Downloading {song_name} {int(length/1024)}'
                 
@@ -183,7 +183,7 @@ class Netease():
     """
     网易云音乐下载
     """
-    def __init__(self, timeout, folder, quiet, cookit_path):
+    def __init__(self, timeout, folder, quiet, cookie_path):
         self.crawler = Crawler(timeout, cookie_path)
         self.folder = '.' if folder is None else folder
         self.quiet = quiet
@@ -198,9 +198,10 @@ class Netease():
         try:
             song = self.crawler.search_song(song_name, song_num, self.quiet)
         except:
-            click.echo('download_song_by_search error')
+            click.echo('download_song_by_serach error')
+
         if song != None:
-            self.download_song_by_search(song.song_id, song.song_name, song.song_num, self.folder)
+            self.download_song_by_id(song.song_id, song.song_name, song.song_num, self.folder)
 
     def download_song_by_id(self, song_id, song_name, song_num, folder='.'):
         """
@@ -233,6 +234,3 @@ if __name__ == '__main__':
             netease.download_song_by_search(song_name, song_num + 1)
     else:
         click.echo('music_list.txt not exist.')
-
-
-    
