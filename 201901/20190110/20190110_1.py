@@ -5,7 +5,7 @@
 @Github: https://github.com/chenxj1101
 @Mail: ccj799@gmail.com
 @Date: 2019-01-10 13:30:11
-@LastEditTime: 2019-01-10 16:43:58
+@LastEditTime: 2019-01-10 21:38:37
 @Description: python实现2048小游戏
 '''
 
@@ -21,7 +21,7 @@ class Action(object):
     RESTART = 'restart'
     EXIT = 'exit'
 
-    letter_codes = [ord(ch) for ch in 'WASDRQwasdqr']
+    letter_codes = [ord(ch) for ch in 'WASDRQwasdrq']
     actions = [UP, LEFT, DOWN, RIGHT, RESTART, EXIT]
     actions_dict = dict(zip(letter_codes, actions * 2))
 
@@ -49,7 +49,7 @@ class Grid(object):
     def add_random_item(self):
         empty_cells = [(i, j) for i in range(self.size) for j in range(self.size) if self.cells[i][j] == 0]
         (i, j) = random.choice(empty_cells)
-        self.cell[i][j] = 4 if random.randrange(100) >= 90 else 2
+        self.cells[i][j] = 4 if random.randrange(100) >= 90 else 2
     
     def transpose(self):
         self.cells = [list(row) for row in zip(*self.cells)]
@@ -87,7 +87,7 @@ class Grid(object):
     def move_right(self):
         self.invert()
         self.move_left()
-        self.invert
+        self.invert()
     
     def move_up(self):
         self.transpose()
@@ -104,10 +104,10 @@ class Grid(object):
         def change(i):
             if row[i] == 0 and row[i + 1] != 0:
                 return True
-            if row[i] != 0 and row[i + 1] == row[i]
+            if row[i] != 0 and row[i + 1] == row[i]:
                 return True
             return False
-        return any(change(i) for i range(len(row) - 1))
+        return any(change(i) for i in range(len(row) - 1))
     
     def can_move_left(self):
         return any(self.row_can_move_left(row) for row in self.cells)
@@ -121,11 +121,13 @@ class Grid(object):
     def can_move_up(self):
         self.transpose()
         can = self.can_move_left()
+        self.transpose()
         return can
     
     def can_move_down(self):
-        self.transpose
+        self.transpose()
         can = self.can_move_right()
+        self.transpose()
         return can
 
 
@@ -136,4 +138,114 @@ class Screen(object):
     over_string = '**********GEME OVER**********'
     win_strng = '**********YOU WIN!**********'
 
-    def __init__(self, screen=None, grid=None, )
+    def __init__(self, screen=None, grid=None, score=0, best_score=0, over=False, win=False):
+        self.grid = grid
+        self.score = score
+        self.over = over
+        self.win = win
+        self.screen = screen
+        self.counter = 0
+
+    def cast(self, string):
+        self.screen.addstr(string + '\n')
+
+    def draw_row(self, row):
+        self.cast(''.join('|{: ^5}'.format(num) if num > 0 else '|     ' for num in row) + '|')
+
+    def draw(self):
+        self.screen.clear()
+        self.cast('SCORE: ' + str(self.score))
+        for row in self.grid.cells:
+            self.cast('+-----' * self.grid.size + '+')
+            self.draw_row(row)
+        self.cast('+-----' * self.grid.size + '+')
+
+        if self.win:
+            self.cast(self.win_string)
+        else:
+            if self.over:
+                self.cast(self.over_string)
+            else:
+                self.cast(self.help_string1)
+        self.cast(self.help_string2)
+
+
+class GameManager(object):
+
+    def __init__(self, size=4, win_num=2048):
+        self.size = size
+        self.win_num = win_num
+        self.reset()
+
+    def reset(self):
+        self.state = 'init'
+        self.win = False
+        self.over = False
+        self.score = 0
+        self.grid = Grid(self.size)
+        self.grid.reset()
+
+    @property
+    def screen(self):
+        return Screen(screen=self.stdscr, score=self.score, grid=self.grid, win=self.win, over=self.over)
+
+    def move(self, direction):
+        if self.can_move(direction):
+            getattr(self.grid, 'move_' + direction)()
+            self.grid.add_random_item()
+            return True
+        else:
+            return False
+
+    @property
+    def is_win(self):
+        self.win = max(chain(*self.grid.cells)) >= self.win_num
+        return self.win
+
+    @property
+    def is_over(self):
+        self.over = not any(self.can_move(move) for move in self.action.actions)
+        return self.over
+
+    def can_move(self, direction):
+        return getattr(self.grid, 'can_move_' + direction)()
+
+    def state_init(self):
+        self.reset()
+        return 'game'
+
+    def state_game(self):
+        self.screen.draw()
+        action = self.action.get()
+
+        if action == Action.RESTART:
+            return 'init'
+        if action == Action.EXIT:
+            return 'exit'
+        if self.move(action):
+            if self.is_win:
+                return 'win'
+            if self.is_over:
+                return 'over'
+        return 'game'
+
+    def _restart_or_exit(self):
+        self.screen.draw()
+        return 'init' if self.action.get() == Action.RESTART else 'exit'
+
+    def state_win(self):
+        return self._restart_or_exit()
+
+    def state_over(self):
+        return self._restart_or_exit()
+
+    def __call__(self, stdscr):
+        curses.use_default_colors()
+        self.stdscr = stdscr
+        self.action = Action(stdscr)
+        while self.state != 'exit':
+            self.state = getattr(self, 'state_' + self.state)()
+
+
+if __name__ == "__main__":
+    curses.wrapper(GameManager())
