@@ -5,7 +5,7 @@
 @Github: https://github.com/chenxj1101
 @Mail: ccj799@gmail.com
 @Date: 2019-01-11 15:38:04
-@LastEditTime: 2019-01-11 15:41:07
+@LastEditTime: 2019-01-14 15:26:41
 @Description: 暴力破解加密rar, 多进程，多进程+多线程
 '''
 
@@ -77,7 +77,7 @@ if __name__ == "__main__":
                 break
     
     '''
-    利用多线程，同事运行pool函数创建执行子进程，以及运行获取子进程返回值函数
+    利用多线程，同时运行pool函数创建执行子进程，以及运行获取子进程返回值函数
     '''
     t1 = threading.Thread(target=pool_th)
     t2 = threading.Thread(target=result_th)
