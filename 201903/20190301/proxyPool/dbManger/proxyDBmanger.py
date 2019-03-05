@@ -75,3 +75,43 @@ class ProxyDBmanager(object):
 
         except Exception as e:
             logging.exception('===== mysql delete data exception =====\n %s', e)
+
+    def plus_proxy_faild_time(self, ip):
+
+        update_sql = (
+            "update {} "
+            "set failed_count = failed_count + 1 "
+            "where ip = INET_ATON(%s)".format(self.__proxy_table)
+        )
+
+        select_time_sql = (
+            "select failed_count "
+            "from {} "
+            "where ip = INET_ATON(%s)".format(self.__proxy_table)
+        )
+
+        delete_sql = (
+            "delete from {} "
+            "where ip = INET_ATON(%s)".format(self.__proxy_table)
+        )
+
+
+        if ip is not None:
+            try:
+                self.cursor.execute(select_time_sql, ip)
+                self.conn.commit()
+
+                datas = self.cursor.fetchone()
+
+                if datas[0] >= 3 | datas[0] + 1 >= 3:
+                    self.cursor.execute(delete_sql, ip)
+                    self.conn.commit()
+                    logging.debug('===  success to delete %s proxy  ===', ip)
+                else:
+                    self.cursor.execute(update_sql, ip)
+                    self.conn.commit()
+                    logging.debug('===  success to update %s proxy ===', ip)
+            except Exception as e:
+                logging.exception('=== mysql operation exception ===\n %s', e)
+        else:
+            logging.error('===  ip is None  ===')
