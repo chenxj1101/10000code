@@ -19,12 +19,14 @@ def get_log_config():
 
     LOG_STORE_NAME = 'proxy_{}.txt'.format(datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))
 
+    fh = logging.FileHandler(encoding='utf-8', mode='w', filename='./' + LOG_STORE_NAME)
+
     logging.basicConfig(
         level=logging.DEBUG,
+        handlers=[fh],
         format='%(asctime)s %(filename)s[line:%(lineno)d]/%(levelname)s/  %(message)s',
-        datefmt='%Y-%b-%d %H:%M:%S',
-        filename='./' + LOG_STORE_NAME,
-        filemode='w'
+        datefmt='%Y-%m-%d %H:%M:%S'
+        
     )
 
 

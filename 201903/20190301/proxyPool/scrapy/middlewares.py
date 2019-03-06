@@ -54,7 +54,7 @@ class CatchExceptionMiddleware(object):
 
 
 class RetryMiddleware(object):
-    def process_exception(slef, request, exception, spider):
+    def process_exception(self, request, exception, spider):
         try:
             proxy = request.meta['proxy']
             if 'http://' in proxy:

@@ -23,5 +23,5 @@ class BaseSpider(object):
         if self.headers is None:
             responese = requestEnginer.do_get(self.url)
         else:
-            responese = requestEnginer.do_get(slef.url, self.headers)
+            responese = requestEnginer.do_get(self.url, self.headers)
         return responese

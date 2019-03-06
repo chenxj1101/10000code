@@ -16,7 +16,7 @@ from proxyPool.model.proxy import Proxy
 from proxyPool.spiders.baseSpider import BaseSpider
 
 
-class XiciSpiderf(BaseSpider):
+class XiciSpider(BaseSpider):
 
     url = 'http://www.xicidaili.com/wt/1'
     # url = 'http://www.xicidaili.com/wn'
@@ -44,9 +44,9 @@ class XiciSpiderf(BaseSpider):
 
         proxy_model_list = []
 
-        pritn('正在爬取西刺代理......')
+        print('正在爬取西刺代理......')
 
-        response = super(XiciSpiderf, self).get_proxies()
+        response = super(XiciSpider, self).get_proxies()
         selector = etree.HTML(response.text)
 
         infos = selector.xpath('//tr[@class="odd"]')
@@ -77,6 +77,7 @@ class XiciSpiderf(BaseSpider):
                 proxy.set_agent(self.agent)
                 proxy.set_survival_time(survival_time)
                 proxy_model_list.append(proxy)
+                print(len(proxy_model_list))
             except Exception as e:
                 logging.debug(e)
         

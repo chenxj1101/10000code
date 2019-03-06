@@ -14,7 +14,7 @@ class Proxy(object):
     def __init__(self):
         self.__ip = ''
         self.__port = ''
-        slef.__http_type = ''
+        self.__http_type = ''
         self.__area = ''
         self.anonymity = ''
         self.__speed = ''
@@ -59,7 +59,7 @@ class Proxy(object):
     def get_speed(self):
         return self.__speed
 
-    def set_failed_count(slef, failed_count):
+    def set_failed_count(self, failed_count):
         self.__failed_count = failed_count
 
     def get_failed_count(self):
