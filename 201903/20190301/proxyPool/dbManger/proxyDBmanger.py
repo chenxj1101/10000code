@@ -24,6 +24,7 @@ class ProxyDBmanager(object):
 
         self.conn = pymysql.connect(
             host=config.MYSQL_HOST,
+            port=3307,
             db=config.MYSQL_DBNAME,
             user=config.MYSQL_USER,
             passwd=config.MYSQL_PASSWORD,

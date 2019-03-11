@@ -33,10 +33,10 @@ def get_log_config():
 MYSQL_HOST = '127.0.0.1'
 MYSQL_DBNAME = 'proxy'
 MYSQL_USER = 'root'
-MYSQL_PASSWORD = '123456'
+MYSQL_PASSWORD = 'chenxj799'
 
 THREADPOOL_NUM = 10
 
-Validated_url = 'https://www.baidu.com'
+Validated_url = 'https://book.douban.com'
 
 IF_USE_PROXY = True

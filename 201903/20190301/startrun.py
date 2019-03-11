@@ -50,5 +50,5 @@ if __name__ == "__main__":
     get_log_config()
 
     manager = SpiderManager()
-    spider_list = [book(), ]
+    spider_list = [books(), ]
     manager.start()
