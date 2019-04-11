@@ -46,7 +46,7 @@ if os.path.exists(f"{demand_path}/unpass.txt"):
     tb = unpass_table(f"{demand_path}/unpass.txt")
     os.system(f"rm {demand_path}/unpass.txt")
     content = (f'各位好: <br>附件是{project}上机的样本生信质控报告，<span style="color:red;">不通过样本如下：</span> <br>'
-               f"{tb.get_html_string() }"
+               f"{tb.get_html_string(format=True, border=True, hrules=1, vrules=1) }"
                f"分析路径为 {abspath}<br>" 
                f"祝好! <br>"
                f"---------------------- <br>"
