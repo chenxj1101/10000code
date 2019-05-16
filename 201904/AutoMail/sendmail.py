@@ -1,13 +1,12 @@
-#!/usr/bin/env python
-# coding=UTF-8
+#!/home/galaxy/.pyenv/shims/python
+# -*- coding: utf-8 -*-
 
-'''
+"""
 @Author: chenxj
-@Github: https://github.com/chenxj1101
-@Mail: ccj799@gmail.com
-@Description: 邮件发送类
-@Date: 2019-04-10 14:08:48
-'''
+@Time: 2019/4/3 17:03
+@Mail: chenxj5@dazd.cn
+@Description: 邮件构造发送
+"""
 
 import smtplib
 import os
@@ -18,7 +17,7 @@ from email.header import Header
 
 
 class SendMail(object):
-    # 构造函数，初始化基本信息
+    # 构造函数
     def __init__(self, host, user, passwd, user_name):
         self.user = user
         self._from = f"{user_name} <{user}>"
@@ -50,7 +49,7 @@ class SendMail(object):
         files = [path + '/' + f for f in os.listdir(path) if 'xlsx' in f]
         for file in files:
             filename = file.split("/")[-1]
-            print(filename)
+            # print(filename)
             att = MIMEText(open(file, 'rb').read(), 'base64', 'utf-8')
             att["Content-Type"] = 'application/octet-stream'
             att.add_header('Content-Disposition', 'attachment', filename=('gbk', '', filename))
@@ -70,22 +69,22 @@ class SendMail(object):
             print(str(e))
             return False
 
-    # 析构函数，释放资源
+    # 析构函数
     def __del__(self):
         self._smtp.quit()
         self._smtp.close()
 
 
 if __name__ == '__main__':
-    host = 'smtp.xxxx.cn'
-    user = 'chenxj@xxx.cn'
+    host = 'smtp.dazd.cn'
+    user = 'chenxj5@dazd.cn'
     passwd = 'xxxxxx'
-    name = 'XXXX'
+    name = '陈相剑'
 
     sub = '质控报告'
     content = '各位好:\n 这是XXXXX上机的生信质控报告，请查收。'
-    to = ['111111@qq.com', '222222@qq.com']
-    cc = ['333333@163.com', '444441@163.com']
+    to = ['442185473@qq.com', '1483850264@qq.com']
+    cc = ['chenxj799@163.com', 'cxjlg1@163.com']
     path = '/mnt/analysis/tests/test_chenxj/2019-04-09'
 
     mail = SendMail(host, user, passwd, name)
